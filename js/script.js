@@ -4,7 +4,6 @@ const api = "https://japceibal.github.io/japflix_api/movies-data.json";
 function estrellasMostrar(vote_average) {
     const estrellas = Math.round(vote_average / 2);
     let html = "";
-
     for (let i = 1; i <= 5; i++) {
         if (i <= estrellas) {
             html += `<span class="fa fa-star checked"></span>`;
@@ -61,7 +60,12 @@ buscar.addEventListener("click", function () {
         <h5>${peli.title}</h5>
         <em>${peli.tagline}</em>
         <div>${estrellasMostrar(peli.vote_average)}</div>`;
-            lista.appendChild(li);
+            
+        li.addEventListener("click", function() {
+            mostrarOffcanvas(peli);
+        });
+
+        lista.appendChild(li);
         });
     } else {
         lista.innerHTML = `
@@ -70,3 +74,24 @@ buscar.addEventListener("click", function () {
       </li>`;
     }
 });
+
+function mostrarOffcanvas(peli) {
+    document.getElementById("canvasTitle").innerText = peli.title;
+    document.getElementById("canvasOverview").innerText = peli.overview;
+    const listaGeneros = document.getElementById("canvasGenres");
+    listaGeneros.innerHTML = "";
+    peli.genres.forEach(gen => {
+        const li = document.createElement("li");
+        li.innerText = gen.name;
+        listaGeneros.appendChild(li);
+    });
+
+
+    document.getElementById("infoYear").innerText = "Año: " + peli.release_date.substring(0, 4);
+    document.getElementById("infoRuntime").innerText = "Duración: " + peli.runtime + " min";
+    document.getElementById("infoBudget").innerText = "Presupuesto: $" + peli.budget.toLocaleString();
+    document.getElementById("infoRevenue").innerText = "Ganancias: $" + peli.revenue.toLocaleString();
+
+    const offcanvas = new bootstrap.Offcanvas(document.getElementById("movieCanvas"));
+    offcanvas.show();
+}
